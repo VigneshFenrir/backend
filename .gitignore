@@ -1,0 +1,5 @@
+# if we want to not include in git use this
+# use / at the end for folder,then use * for select all if only want ignor all zip files means use *.zip
+
+node_modules/
+npm.text
