@@ -2,49 +2,58 @@
 
 const xpress = require("express");
 
+const joi = require("joi");
+// console.log(joi);
+const scehma = joi.object({
+  movies: joi.string().min(3).required(),
+  director: joi.string().min(3).required(),
+  hero: joi.string().min(3).required(),
+  musicdirector: joi.string().min(3).required(),
+  producer: joi.string().min(3).required(),
+});
 // here express is function ,so we have to included in app
 
 const app = xpress();
 const tittle = [
   {
     id: "1",
-    tamilmovies: "125",
-    englishMovies: "200",
-    koreanMovies: "80",
-    teluguMovies: "345",
-    malayalamMovies: "222",
+    movies: "vtv",
+    director: "gvm",
+    hero: "str",
+    musicdirector: "arr",
+    producer: "vtv ganesh",
   },
   {
     id: "2",
-    tamilmovies: "125",
-    englishMovies: "200",
-    koreanMovies: "80",
-    teluguMovies: "345",
-    malayalamMovies: "222",
+    movies: "thotti jaya",
+    director: "simbu",
+    hero: "80",
+    musicdirector: "gv.prakash",
+    producer: "vignesh",
   },
   {
     id: "3",
-    tamilmovies: "125",
-    englishMovies: "200",
-    koreanMovies: "80",
-    teluguMovies: "345",
-    malayalamMovies: "222",
+    movies: "valok",
+    director: "gvm",
+    hero: "ghost",
+    musicdirector: "sams jr",
+    producer: "thomas",
   },
   {
     id: "4",
-    tamilmovies: "125",
-    englishMovies: "200",
-    koreanMovies: "80",
-    teluguMovies: "345",
-    malayalamMovies: "222",
+    movies: "nun",
+    director: "stanley",
+    hero: "vampire",
+    musicdirector: "david",
+    producer: "spiderman",
   },
   {
     id: "5",
-    tamilmovies: "125",
-    englishMovies: "200",
-    koreanMovies: "80",
-    teluguMovies: "345",
-    malayalamMovies: "222",
+    movies: "aiyarthil oruvan",
+    director: "selvaragavan",
+    hero: "karthi",
+    musicdirector: "gv.prakash",
+    producer: "alien",
   },
 ];
 
@@ -93,18 +102,64 @@ app.use(xpress.json());
 
 app.post("/vignesh/movieslist", (req, res) => {
   // in xpress we use xpress.json for acesssing the post updates from raw data
-  console.log(req.body.englishMovies);
-  if (!req.body.englishMovies || req.body.englishMovies.length < 10) {
-    res.status(402).send("body name invalid or less than 3");
+
+  console.log(req.body.director);
+
+  // if (!req.body.director || req.body.director.length < 3) {
+  //   res.status(402).send("body name invalid or less than 3");
+  // }
+  // if (!req.body.movies || req.body.movies.length < 10) {
+  //   res.status(402).send("body name invalid or less than 3");
+  // }
+  const result = scehma.validate(req.body);
+
+  if (result.error) {
+    res.status(404).send(result.error.details[0].message);
+    // console.log(result.error.details[0].message);
+    return;
   }
+
+  console.log("aftererror");
+
   const myTittle = {
     id: tittle.length + 1,
-    // tamilmovies: req.body.tamilmovies,
-    englishMovies: req.body.englishMovies,
+    movies: req.body.movies,
+    hero: req.body.hero,
+    director: req.body.director,
+    musicdirector: req.body.musicdirector,
+    producer: req.body.producer,
   };
 
   tittle.push(myTittle);
 
+  res.send(myTittle);
+});
+
+app.put("/vignesh/movieslist/:id", (req, res) => {
+  const tittleId = parseInt(req.params.id);
+  const myTittle = tittle.find((t) => t.id == tittleId);
+
+  if (!myTittle) res.status(404).send("id are not same");
+
+  const result = scehma.validate(req.body);
+  if (result.error) {
+    res.status(404).send(result.error.details[0].message);
+  }
+  myTittle.movies = req.body.movies;
+  myTittle.hero = req.body.hero;
+  myTittle.musicdirector = req.body.musicdirector;
+  myTittle.director = req.body.director;
+  myTittle.musicdirector = req.body.musicdirector;
+
+  res.send(myTittle);
+});
+app.delete("/vignesh/movieslist/:id", (req, res) => {
+  const tittleId = parseInt(req.params.id);
+  const myTittle = tittle.find((t) => t.id == tittleId);
+  let index = tittle.indexOf(myTittle);
+  tittle.splice(index, 1);
+  // const result = scehma.validate(req.body);
+  // if (result.error) res.status(404).send(result.error.details[0].message);
   res.send(myTittle);
 });
 console.log("hii");
